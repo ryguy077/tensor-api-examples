@@ -3,5 +3,5 @@
 To install & run example:
 ```
 npm ci
-node test.js
+TENSOR_API_KEY="..." node test.js
 ```

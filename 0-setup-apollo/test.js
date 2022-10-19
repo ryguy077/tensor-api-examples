@@ -2,8 +2,8 @@ const {  HttpLink, ApolloClient, InMemoryCache, ApolloProvider, gql } = require(
 const { ApolloLink, concat } = require("apollo-link");
 const fetch = require('cross-fetch');
 
-const API_KEY = '<YOUR API KEY HERE>';
-
+const API_KEY = process.env.TENSOR_API_KEY ?? '';
+if(!API_KEY) throw new Error("please specify envvar TENSOR_API_KEY");
 
 // Setup Apollo client.
 const authLink = new ApolloLink((operation, forward) => {
@@ -30,14 +30,14 @@ const client = new ApolloClient({
 	const resp = await client
 	  .query({
 	    query: gql`
-				query TswapBuyNftTx($buyer: String!, $maxPriceLamports: Decimal!, $mint: String!, $pool: String!) {
-				  tswapBuyNftTx(buyer: $buyer, maxPriceLamports: $maxPriceLamports, mint: $mint, pool: $pool) {
-				    txs {
-				      lastValidBlockHeight
-				      tx
-				    }
-				  }
-				}
+        query TswapBuyNftTx($buyer: String!, $maxPriceLamports: Decimal!, $mint: String!, $pool: String!) {
+          tswapBuyNftTx(buyer: $buyer, maxPriceLamports: $maxPriceLamports, mint: $mint, pool: $pool) {
+            txs {
+              lastValidBlockHeight
+              tx
+            }
+          }
+        }
 	    `,
 			variables: {
 			  "buyer": "ACZtzuJpk9LXAN6x9rYPpBDZnLXSf5svK6vN56vhjmcM",
