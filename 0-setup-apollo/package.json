@@ -1,0 +1,14 @@
+{
+  "name": "0-setup-apollo",
+  "version": "1.0.0",
+  "description": "Example on setting up Apollo Client and creating a TensorSwap buy tx.",
+  "main": "index.js",
+  "scripts": {},
+  "dependencies": {
+    "@apollo/client": "^3.7.0",
+    "apollo-link": "^1.2.14",
+    "cross-fetch": "^3.1.5",
+    "graphql": "^15.8.0",
+    "react": "^18.2.0"
+  }
+}
