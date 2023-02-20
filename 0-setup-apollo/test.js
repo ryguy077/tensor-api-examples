@@ -111,7 +111,7 @@ const client = new ApolloClient({
     },
   });
 
-  const results = resp.data.allCollections;
+  const results = resp.data.allCollections.collections;
   console.log(results);
   // {
   //   txs: [
