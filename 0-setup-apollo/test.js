@@ -1,3 +1,12 @@
+const {
+  HttpLink,
+  ApolloClient,
+  InMemoryCache,
+  gql,
+} = require("@apollo/client");
+const { ApolloLink, concat } = require("apollo-link");
+const fetch = require("cross-fetch");
+
 const API_KEY = process.env.TENSOR_API_KEY ?? "";
 if (!API_KEY) throw new Error("please specify envvar TENSOR_API_KEY");
 
