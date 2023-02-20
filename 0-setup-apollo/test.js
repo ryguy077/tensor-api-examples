@@ -1,12 +1,3 @@
-const {
-  HttpLink,
-  ApolloClient,
-  InMemoryCache,
-  gql,
-} = require("@apollo/client");
-const { ApolloLink, concat } = require("apollo-link");
-const fetch = require("cross-fetch");
-
 const API_KEY = process.env.TENSOR_API_KEY ?? "";
 if (!API_KEY) throw new Error("please specify envvar TENSOR_API_KEY");
 
@@ -32,6 +23,40 @@ const client = new ApolloClient({
 
 // Run query.
 (async () => {
+  const userTswapOrdersResp = await client.query({
+    query: gql`
+    query UserTensorSwapOrders($owner: String!) {
+      userTswapOrders(owner: $owner) {
+        pool {
+          address
+        }
+      }
+    }
+    `,
+    variables: {
+      "owner": "AiwvWy3JQwN6GnKaLRnLhHwbtGnmj2j413TmJtMqBqeG"
+    },
+  });
+  
+  let tokenMints = userTswapOrdersResp.data.userTswapOrders.pool.map(pool => pool.address);
+  
+  const mintsResp = await client.query({
+    query: gql`
+    query Mints($tokenMints: [String!]!) {
+      mints(tokenMints: $tokenMints) {
+        slug
+        wlSlug
+      }
+    }
+    `,
+    variables: {
+      "tokenMints": tokenMints
+    },
+  });
+  
+  let slugs = mintsResp.data.mints.map(mint => mint.slug);
+  let slugsMe = mintsResp.data.mints.map(mint => mint.wlSlug);
+  
   const resp = await client.query({
     query: gql`
     query CollectionsStats(
@@ -102,9 +127,9 @@ const client = new ApolloClient({
     }
     `,
     variables: {
-      "slugs": null,
+      "slugs": slugs,
       "slugsDisplay": null,
-      "slugsMe": null,
+      "slugsMe": slugsMe,
       "sortBy": "stats.volume24h:desc",
       "limit": 50,
       "page": 1
@@ -113,14 +138,4 @@ const client = new ApolloClient({
 
   const results = resp.data.allCollections.collections;
   console.log(results);
-  // {
-  //   txs: [
-  //     {
-  //       lastValidBlockHeight: 141160615,
-  //       tx: [0, 0, 0, ...],
-  //       __typename: 'OnchainTx'
-  //     }
-  //   ],
-  //   __typename: 'TxResponse'
-  // }
 })();
