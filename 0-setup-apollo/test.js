@@ -111,7 +111,7 @@ const client = new ApolloClient({
     },
   });
 
-  const results = resp.data.tswapBuyNftTx;
+  const results = resp.data.CollectionsStats;
   console.log(results);
   // {
   //   txs: [
