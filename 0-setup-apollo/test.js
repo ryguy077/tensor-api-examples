@@ -34,30 +34,80 @@ const client = new ApolloClient({
 (async () => {
   const resp = await client.query({
     query: gql`
-      query TswapBuyNftTx(
-        $buyer: String!
-        $maxPriceLamports: Decimal!
-        $mint: String!
-        $pool: String!
+    query CollectionsStats(
+      $slugs: [String!],
+      $slugsMe: [String!],
+      $slugsDisplay: [String!],
+      $sortBy: String,
+      $page: Int,
+      $limit: Int, 
+    ) {
+      allCollections(
+        slugs: $slugs,
+        slugsMe: $slugsMe,
+        slugsDisplay: $slugsDisplay,  
+        sortBy: $sortBy,
+        page: $page,
+        limit: $limit
       ) {
-        tswapBuyNftTx(
-          buyer: $buyer
-          maxPriceLamports: $maxPriceLamports
-          mint: $mint
-          pool: $pool
-        ) {
-          txs {
-            lastValidBlockHeight
-            tx
+        total
+        collections {
+          id 
+          slug 
+          slugMe 
+          slugDisplay 
+          statsOverall {
+            floor1h
+            floor24h
+            floor7d
+            floorPrice
+            numListed
+            numMints
+            priceUnit
+            sales1h
+            sales24h
+            sales7d
+            volume1h
+            volume24h
+            volume7d
           }
+          statsSwap { # TensorSwap + HadeSwap + Elixir
+            buyNowPrice
+            sellNowPrice
+          }
+          statsTSwap { # TensorSwap only
+            buyNowPrice
+            nftsForSale
+            numMints
+            priceUnit
+            sales7d
+            sellNowPrice
+            solDeposited
+            volume7d
+          }
+          statsHSwap { # HadeSwap only
+            buyNowPrice
+            nftsForSale
+            priceUnit
+            sales7d
+            sellNowPrice
+            solDeposited
+            volume7d
+          }
+          tswapTVL
+          firstListDate
+          name
         }
       }
+    }
     `,
     variables: {
-      buyer: "ACZtzuJpk9LXAN6x9rYPpBDZnLXSf5svK6vN56vhjmcM",
-      maxPriceLamports: "2900000000",
-      mint: "DqbDQvm9Va1RmnsnUPHxpU87oBLHMMKvFqC3DhZUdHDN",
-      pool: "5yEpsbcaN4LmCF1qJ3Dn1L2GmS3fCHMLhfsQvacCy76U",
+      "slugs": null,
+      "slugsDisplay": null,
+      "slugsMe": null,
+      "sortBy": "stats.volume24h:desc",
+      "limit": 50,
+      "page": 1
     },
   });
 
